@@ -1,1 +1,35 @@
+name: Deploy Spring Boot por Ambiente
 
+on:
+  push:
+    branches:
+      - main
+      - homolog
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Define o environment GitHub (para usar os secrets corretos)
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'homolog' && 'homolog' || 'undefined' }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Detectar ambiente
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "ENV=production" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF_NAME}" == "homolog" ]]; then
+            echo "ENV=homolog" >> $GITHUB_ENV
+          fi
+
+      - name: Criar arquivo application-${{ env.ENV }}.properties
+        run: |
+          echo "spring.application.name=cicd-env-springboot" > src/main/resources/application-${{ env.ENV }}.properties
+          echo "spring.profiles.active=${{ env.ENV }}" >> src/main/resources/application-${{ env.ENV }}.properties
+          echo "app.environment=${{ secrets.APP_ENVIRONMENT }}" >> src/main/resources/application-${{ env.ENV }}.properties
+
+      - name: Build do projeto com Maven
+        run: ./mvnw clean package -Dspring.profiles.active=${{ env.ENV }}
