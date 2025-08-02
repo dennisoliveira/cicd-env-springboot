@@ -13,14 +13,14 @@ public class HelloController {
 
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
     public String hello() {
-        String html = String.format("""
+        return String.format("""
                <!DOCTYPE html>
                <html>
                  <head>
                    <title>GitHub Actions - CI/CD</title>
                    <style>
                      body {
-                       background: #161b22;
+                       background: oklch(26.2%% 0.051 172.552);
                        color: #fff;
                    </style>
                  </head>
@@ -29,7 +29,6 @@ public class HelloController {
                  </body>
                </html>
                """, environment);
-        return html;
     }
 
 }
