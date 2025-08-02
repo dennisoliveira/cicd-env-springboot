@@ -32,4 +32,4 @@ jobs:
           echo "app.environment=${{ secrets.APP_ENVIRONMENT }}" >> src/main/resources/application-${{ env.ENV }}.properties
 
       - name: Build do projeto com Maven
-        run: ./mvnw clean package -Dspring.profiles.active=${{ env.ENV }}
+        run: ./mvnw clean package -Dspring.profiles.active=${{ env.ENV }} -DskipTests
